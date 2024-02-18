@@ -9,7 +9,7 @@ userRoutes.get(
   Authentication.handler,
   userModule.getUserById.bind(userModule)
 );
-userRoutes.put(
+userRoutes.get(
   "/user-find",
   Authentication.handler,
   userModule.getUserByEmail.bind(userModule)
