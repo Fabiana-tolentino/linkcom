@@ -10,7 +10,7 @@ userRoutes.get(
   userModule.getUserById.bind(userModule)
 );
 userRoutes.put(
-  "/user-find/:email",
+  "/user-find",
   Authentication.handler,
   userModule.getUserByEmail.bind(userModule)
 );

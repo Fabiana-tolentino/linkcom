@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { IUserController } from "./userControllerInterface";
 import { IUserService } from "../services/userServiceInterface";
+import { getUserByEmailValidator } from "../utils/getUserByEmailValidator";
 
 export class UserController implements IUserController {
   constructor(private userService: IUserService) {}
@@ -56,8 +57,9 @@ export class UserController implements IUserController {
 
   async getUserByEmail(req: Request, res: Response): Promise<void> {
     try {
-      const { email } = req.params;
-      const user = await this.userService.getUserByEmail(email);
+      const { email } = req.query;
+      await getUserByEmailValidator.validate({ email }, { abortEarly: true });
+      const user = await this.userService.getUserByEmail(email as string);
 
       res.status(200).json(user);
     } catch (error: any) {
