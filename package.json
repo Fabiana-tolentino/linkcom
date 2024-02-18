@@ -4,7 +4,8 @@
   "description": "Projeto final - modulo 3 Arnia - Fabiana Tolentino",
   "main": "server.ts",
   "scripts": {
-    "dev": "ts-node-dev src/server.ts"
+    "dev": "ts-node-dev src/server.ts",
+    "build":"tsup"
   },
   "keywords": [],
   "author": "Fabiana Tolentino",
