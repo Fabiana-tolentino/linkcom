@@ -10,3 +10,6 @@ routes.use(authRoutes);
 routes.use(userRoutes);
 routes.use(productRoutes);
 routes.use(redeemProductRoutes);
+routes.get("/", (req, res) => {
+  res.write("Welcome");
+});
