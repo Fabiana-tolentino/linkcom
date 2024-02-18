@@ -5,4 +5,8 @@ export interface IProductRepo {
   createProduct(productData: CreateProductDto): Promise<Product | null>;
   getAll(): Promise<Array<Product>>;
   getProductById(id: string): Promise<Product | null>;
+  updateProduct(
+    id: string,
+    updateProductData: CreateProductDto
+  ): Promise<Product | null>;
 }

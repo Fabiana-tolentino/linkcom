@@ -80,9 +80,6 @@ export class UserService implements IUserService {
 
     if (!user) throw new Error("User not found");
 
-    if (user.typeUser !== "admin")
-      throw new Error("user does not have permission");
-
     if (addGems < 0) throw new Error("add value bigger then zero");
 
     if (addGems > 100) throw new Error("maximum gems value is 100 ");

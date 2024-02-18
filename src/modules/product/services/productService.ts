@@ -1,3 +1,4 @@
+import { isValidObjectId } from "mongoose";
 import { CreateProductDto } from "../dtos/createProductDto";
 import { Product } from "../models/productModel";
 import { IProductRepo } from "../repos/productRepoInterface";
@@ -25,7 +26,20 @@ export class ProductService implements IProductService {
   }
 
   async getProductById(id: string): Promise<Product> {
+    if (!isValidObjectId) throw new Error("Product not found");
+
     const product = await this.productRepo.getProductById(id);
+
+    if (!product) throw new Error("Product not found");
+    return product;
+  }
+
+  async updateProduct(
+    id: string,
+    productData: CreateProductDto
+  ): Promise<Product> {
+    if (!isValidObjectId) throw new Error("Product not found");
+    const product = await this.productRepo.updateProduct(id, productData);
 
     if (!product) throw new Error("Product not found");
     return product;

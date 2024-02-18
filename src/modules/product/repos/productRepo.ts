@@ -20,4 +20,14 @@ export class ProductRepo implements IProductRepo {
     const product = await this.productModel.findById(id);
     return product;
   }
+
+  async updateProduct(
+    id: string,
+    productData: CreateProductDto
+  ): Promise<Product | null> {
+    const product = await this.productModel.findByIdAndUpdate(id, productData, {
+      new: true,
+    });
+    return product;
+  }
 }

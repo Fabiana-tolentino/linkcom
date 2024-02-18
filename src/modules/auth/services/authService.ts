@@ -1,61 +1,54 @@
-import  jwt  from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 import { User } from "../../user/models/userModel";
 import { LoginDTO } from "../dtos/loginDTOS";
 import { IAuthRepo } from "../repo/authRepoInterface";
 import { IAuthService } from "./authServiceInterface";
-import bcrypt from "bcrypt"
-import "dotenv/config"
-import { RegisterUserDTO } from '../dtos/registerUserDTO';
-
+import bcrypt from "bcrypt";
+import "dotenv/config";
+import { RegisterUserDTO } from "../dtos/registerUserDTO";
 
 export class AuthService implements IAuthService {
-    constructor(private authRepo: IAuthRepo){}
+  constructor(private authRepo: IAuthRepo) {}
 
-    async login(loginData: LoginDTO): Promise<{user:User,token:string}| null> {
-        const user = await this.authRepo.login(loginData)
-        
-        
-        if(!user || !user.password) throw new Error('Invailed email')
+  async login(
+    loginData: LoginDTO
+  ): Promise<{ user: User; token: string } | null> {
+    const user = await this.authRepo.login(loginData);
 
-        const userPassword = user.password
-        const isPasswordValid = await bcrypt.compare(loginData.password, userPassword)
+    if (!user || !user.password) throw new Error("Invailed email");
 
-        if(!isPasswordValid) throw new Error('Invalid Password')
+    const userPassword = user.password;
+    const isPasswordValid = await bcrypt.compare(
+      loginData.password,
+      userPassword
+    );
 
-        const payload = {...user}
-        const secret = process.env.JWT_SECRET as string
-        const option = {expiresIn:'1d'}
-        const token = await jwt.sign(payload,secret,option)
-        return {user,token}
-    }
-    async registerUser(newData:RegisterUserDTO): Promise<User>{
-        newData.password = await bcrypt.hash(newData.password,10)
-        
+    if (!isPasswordValid) throw new Error("Invalid Password");
 
-        const newUser = await this.authRepo.registerUser(newData)
+    const payload = { ...user };
+    const secret = process.env.JWT_SECRET as string;
+    const option = { expiresIn: "1d" };
+    const token = await jwt.sign(payload, secret, option);
+    return { user, token };
+  }
+  async registerUser(newData: RegisterUserDTO): Promise<User> {
+    newData.password = await bcrypt.hash(newData.password, 10);
 
-        if(!newUser) throw new Error('Invalid User')
+    const newUser = await this.authRepo.registerUser(newData);
 
-        return newUser
-    }
-    async loginAdmin(loginData: LoginDTO): Promise<{user:User,token:string}| null> {
-        const user = await this.authRepo.loginAdmin(loginData)
+    if (!newUser) throw new Error("Invalid User");
 
-        if(!user || !user.password) throw new Error('Invailed email')
-       
-        
-        if(user.typeUser !== 'admin') throw new Error('user not admin')
-        
+    return newUser;
+  }
 
-        const userPassword = user.password
-        const isPasswordValid = await bcrypt.compare(loginData.password, userPassword)
+  async getUserAuthenticated(token: string): Promise<User | null> {
+    if (!token) throw new Error("Invalid user");
 
-        if(!isPasswordValid) throw new Error('Invalid Password')
-
-        const payload = {...user}
-        const secret = process.env.JWT_SECRET as string
-        const option = {expiresIn:'1d'}
-        const token =  jwt.sign(payload,secret,option)
-        return {user,token}
-    }
+    const decodingUser: any = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    );
+    const user: User = { ...decodingUser._doc };
+    return user;
+  }
 }
